@@ -1,0 +1,94 @@
+model Anime {
+    uuid         String    @id @default(uuid()) @db.Uuid
+    name         String    @db.VarChar(255)
+    banner_photo String    @db.Text
+    studio       String    @db.VarChar(255)
+    sinopse      String    @db.Text
+    duration     Int
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime?
+    deletedAt    DateTime?
+
+    AnimeComment AnimeComment[]
+    AnimeRating  AnimeRating[]
+    AnimeGenres  AnimeGenres[]
+    Season       AnimeSeason[]
+    Episode      AnimeEpisode[]
+
+    @@map("animes")
+}
+
+model AnimeEpisode {
+    uuid String @id @default(uuid()) @db.Uuid
+
+    anime_uuid String @db.Uuid
+    anime      Anime  @relation(fields: [anime_uuid], references: [uuid])
+
+    number      Int
+    description String    @db.Text
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime?
+    deletedAt   DateTime?
+
+    @@map("anime_episodes")
+}
+
+model AnimeComment {
+    uuid        String    @id @default(uuid()) @db.Uuid
+    anime_uuid  String    @db.Uuid
+    anime       Anime     @relation(fields: [anime_uuid], references: [uuid])
+    user_uuid   String    @db.Uuid
+    user        User      @relation(fields: [user_uuid], references: [uuid])
+    description String    @db.Text
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime?
+    deletedAt   DateTime?
+
+    @@map("anime_comments")
+}
+
+model AnimeSeason {
+    uuid String @id @default(uuid()) @db.Uuid
+
+    anime_uuid String @db.Uuid
+    anime      Anime  @relation(fields: [anime_uuid], references: [uuid])
+
+    episodes    Int
+    description String    @db.VarChar(255)
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime?
+    deletedAt   DateTime?
+
+    @@map("anime_seasons")
+}
+
+model AnimeGenres {
+    uuid        String @id @default(uuid()) @db.Uuid
+    anime_uuid  String @db.Uuid
+    anime       Anime  @relation(fields: [anime_uuid], references: [uuid])
+    gender_uuid String @db.Uuid
+    gender      Genres @relation(fields: [gender_uuid], references: [uuid])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime?
+    deletedAt DateTime?
+
+    @@map("anime_genres")
+}
+
+model AnimeRating {
+    uuid String @id @default(uuid()) @db.Uuid
+
+    anime_uuid String @db.Uuid
+    anime      Anime  @relation(fields: [anime_uuid], references: [uuid])
+
+    user_uuid String @db.Uuid
+    user      User   @relation(fields: [user_uuid], references: [uuid])
+
+    rating    Int
+    createdAt DateTime  @default(now())
+    updatedAt DateTime?
+    deletedAt DateTime?
+
+    @@map("anime_rating")
+}
